@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: dev
+      changes:
+        - addColumn:
+            tableName: cards
+            columns:
+              - column:
+                  name: balance
+                  type: NUMERIC(19,2)
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false

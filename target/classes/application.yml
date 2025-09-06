@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8080   # порт приложения
 
 spring:
   application:
@@ -11,7 +11,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: validate  # validate / update / create-drop
     show-sql: true
     properties:
       hibernate:
@@ -22,8 +22,9 @@ spring:
 
 jwt:
   secret: supersecretkeysupersecretkey123456
-  expiration: 3600000   # 1 час в мс
+  expiration: 3600000   # 1 час в миллисекундах
 
+# Swagger (springdoc-openapi)
 springdoc:
   api-docs:
     enabled: true

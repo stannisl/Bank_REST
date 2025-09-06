@@ -1,1 +1,430 @@
-# Здесь будет OpenAPI описание всех доступных эндпоинтов и моделей данных.
+openapi: 3.0.1
+info:
+  title: Bankcards Api
+  description: API documentation
+  version: "1.0"
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+tags:
+  - name: Users
+    description: Операции с юзерами для админов
+  - name: Cards
+    description: Операции с банковскими картами
+paths:
+  /api/users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Получить пользователя (Admin only)
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: uuid
+          in: query
+          description: UUID пользователя
+      responses:
+        "200":
+          description: Пользователь успешно получен
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserDto"
+    put:
+      tags:
+        - Users
+      summary: Обновить пользователя (Admin only)
+      operationId: updateUser
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserDto"
+    delete:
+      tags:
+        - Users
+      summary: Удалить пользователя (Admin only)
+      operationId: deleteUser
+      parameters: []
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MessageDto"
+  /api/cards/{id}/block:
+    put:
+      tags:
+        - Cards
+      summary: Блокировать карту
+      operationId: blockCard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MessageDto"
+  /api/cards/{id}/activate:
+    put:
+      tags:
+        - Cards
+      summary: Активировать карту
+      operationId: activateCard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MessageDto"
+  /api/users:
+    get:
+      tags:
+        - Users
+      summary: Получить список пользователей (Admin only)
+      operationId: getAllUsers
+      parameters:
+        - name: page
+          in: query
+          description: страница
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          description: кол-во юзеров на 1ой странице
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        "200":
+          description: Пользователи успешно получены
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserDto"
+    post:
+      tags:
+        - Users
+      summary: Создать пользователя (Admin only)
+      operationId: createUser
+      parameters:
+        - name: uuid
+          in: query
+          description: CreateUserDto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserDto"
+        required: true
+      responses:
+        "201":
+          description: Пользователь успешно создан
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserDto"
+  /api/cards:
+    get:
+      tags:
+        - Cards
+      summary: Получить список карт
+      operationId: getCards
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            default: "false"
+      responses:
+        "200":
+          description: Успешно получены запрашиваемые карты
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CardDto"
+    post:
+      tags:
+        - Cards
+      summary: Создать карту
+      operationId: createCard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CardCreateDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardDto"
+  /api/cards/transfer:
+    post:
+      tags:
+        - transaction-controller
+      summary: Перевод между картами
+      operationId: transfer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferRequestDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TransactionDto"
+  /api/auth/register:
+    post:
+      tags:
+        - auth-controller
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /api/auth/refresh:
+    post:
+      tags:
+        - auth-controller
+      operationId: refreshToken
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /api/auth/logout:
+    post:
+      tags:
+        - auth-controller
+      operationId: logout
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MessageDto"
+  /api/auth/login:
+    post:
+      tags:
+        - auth-controller
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /api/cards/{id}/balance:
+    get:
+      tags:
+        - Cards
+      summary: Получить баланс карты
+      operationId: getBalance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: number
+components:
+  schemas:
+    UpdateUserDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        username:
+          type: string
+        role:
+          type: string
+    MessageDto:
+      type: object
+      properties:
+        message:
+          type: string
+    CreateUserDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    CardCreateDto:
+      type: object
+      properties:
+        ownerId:
+          type: string
+          format: uuid
+        expiryDate:
+          type: string
+    CardDto:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        numberMasked:
+          type: string
+        owner:
+          type: string
+        expiryDate:
+          type: string
+        status:
+          type: string
+        balance:
+          type: number
+    TransferRequestDto:
+      type: object
+      properties:
+        fromCardId:
+          type: string
+          format: uuid
+        toCardId:
+          type: string
+          format: uuid
+        amount:
+          type: number
+    TransactionDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fromCardMasked:
+          type: string
+        toCardMasked:
+          type: string
+        amount:
+          type: number
+        timestamp:
+          type: string
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        role:
+          type: string
+        message:
+          type: string
+    AuthRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
