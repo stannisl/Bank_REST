@@ -27,8 +27,8 @@
 ### 1. Склонировать репозиторий
 
 ```bash
-git clone https://github.com/your-repo/bank-cards.git
-cd bank-cards
+git clone https://github.com/stannisl/Bank_REST.git
+cd Bank_REST
 ```
 
 ### 2. Запустить PostgreSQL через Docker
